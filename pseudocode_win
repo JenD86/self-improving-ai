@@ -1,0 +1,106 @@
+START program
+
+// Component 1: Scanner
+// blackbox: image generation
+
+SCAN environment
+SET environment image
+Call: store start state from Expansion Unit with environment image
+Call: get matching image from Memory Unit with environment image
+Call: generate code block from Evolutionary algorithm generator with problem-solution pair
+
+// --------------------------------------------------
+
+// Component 2: Evolutionary algorithm generator
+// black box, handwave
+// generate code blocks
+
+Function: generate code block
+  Pass In: problem-solution pair
+    REPEAT
+      GENERATE code block
+      RUN code block
+      Call: observe results from Expansion unit with problem-solution pair
+    UNTIL
+      observe results Pass OR user-set time limit expired
+    IF user-set time limit expired
+    THEN
+      END program
+    ENDIF
+  Pass Out: nothing
+EndFunction
+
+// --------------------------------------------------
+
+// Component 3: Expansion unit
+// observe result of code run
+// blackbox module: image creation
+
+Function: store start state
+  Pass In: environment image
+    SET start state to environment image
+    RETURN to Scanner for next call
+  Pass Out: nothing
+EndFunction
+
+Function: observe results
+  Pass In: problem-solution pair
+    GET start state
+    GET memory space occupied
+    IF program occupies more space than start state
+    THEN
+      Call: record solution from Memory Unit with problem-solution pair, strengthen link
+      Pass Out Pass
+    ELSE IF program occupies less space than start state
+      Call: record solution from Memory Unit with problem-solution pair, avoid
+      RETURN to Evolutionary algorithm generator
+      Pass Out Fail
+    ELSE
+      Pass Out Fail
+      RETURN to Evolutionary algorithm generator
+    ENDIF
+  Pass Out: Pass/Fail
+EndFunction
+
+// --------------------------------------------------
+
+// Component 4: Memory unit
+// blackbox: image recognition
+// store 'problem' images/'solution' code block pairs
+
+Function get matching image
+  Pass In: problem image
+  IF any stored problem images match the passed problem image
+  THEN
+    COMPARE the link strength of the matching problem images and their solutions
+    GET the problem/solution pair with the strongest link
+  ELSE
+    GET the most similar problem/solution pair
+  ENDIF
+  RETURN to Scanner for next call
+  Pass Out: problem-solution pair
+EndFunction
+
+Function record solution
+  Pass In: problem-solution pair, strengthen link/avoid
+  IF problem-solution pair exists
+    IF strengthen link
+      THEN strengthen link
+      END program
+      ELSE
+        mark for avoidance
+        RETURN to Expansion unit
+    ENDIF
+  ELSE
+    SAVE problem-solution pair to memory
+    IF strengthen link
+      THEN strengthen link
+      ELSE
+        mark for avoidance
+        RETURN to expansion unit
+    ENDIF
+  ENDIF
+  Pass Out: nothing
+EndFunction
+
+END program
